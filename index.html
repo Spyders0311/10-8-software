@@ -766,11 +766,35 @@ document.querySelectorAll('#tco-officers,#tco-storage,#tco-108-sw,#tco-months')
 calcTCO();
 
 // ── CONTACT FORM ──
-function submitForm(e){
+async function submitForm(e) {
   e.preventDefault();
-  // In production: replace with your form handler (Formspree, Netlify Forms, etc.)
-  document.getElementById('contact-form').style.display='none';
-  document.getElementById('form-success').style.display='block';
+  const form = document.getElementById('contact-form');
+  const btn  = form.querySelector('.form-submit');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  const data = new FormData(form);
+  // FormSubmit.co — no registration required; first submission triggers
+  // an activation email to solin@10-8video.com (click to confirm once).
+  try {
+    const res = await fetch('https://formsubmit.co/ajax/solin@10-8video.com', {
+      method: 'POST',
+      headers: { Accept: 'application/json' },
+      body: data,
+    });
+    if (res.ok) {
+      form.style.display = 'none';
+      document.getElementById('form-success').style.display = 'block';
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Send Message →';
+      alert('Something went wrong. Please try again or email solin@10-8video.com directly.');
+    }
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = 'Send Message →';
+    alert('Network error. Please try again or email solin@10-8video.com directly.');
+  }
 }
 </script>
 </body>
